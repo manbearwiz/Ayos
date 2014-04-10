@@ -7,18 +7,16 @@ from datetime import datetime,tzinfo,timedelta
 from threading import Timer
 
 def Schedule():
-        Platteville.date = datetime.now()
+        utcnow = datetime.utcnow()
+        local_time = datetime.now()	
 
-        print("Scheduling Relay Cycles for next day")
+        print("Scheduling Relay Cycles now ({0:%x %X})".format(local_time))
         next_sunrise = Platteville.next_rising(Sun)
         next_sunset = Platteville.next_setting(Sun)
 
-        utcnow = datetime.utcnow()
-
         next_sunrise_date = next_sunrise.datetime()
         next_sunset_date = next_sunset.datetime()
-        print(next_sunrise_date)
-        print(next_sunset_date)
+
         if next_sunrise_date < next_sunset_date:
                 print("It is night time")
                 relay.turnOff()
@@ -30,11 +28,11 @@ def Schedule():
         sunset_delay = next_sunset_date - utcnow
         reschedule_delay = sunrise_delay + timedelta(minutes=30)
 
-        print("Turning on in {0}".format(sunrise_delay))
+        print("Turning on in {0}, at {1:%x %X}".format(sunrise_delay, sunrise_delay + local_time))
         Timer(sunrise_delay.seconds, relay.turnOn).start()
-        print("Turning off in {0}".format(sunset_delay)) 
+        print("Turning off in {0}, at {1:%x %X}".format(sunset_delay, sunset_delay + local_time)) 
         Timer(sunset_delay.seconds, relay.turnOff).start()
-        print("Rescheduling in {0}".format(reschedule_delay))
+        print("Rescheduling in {0}, at {1:%x %X}".format(reschedule_delay, reschedule_delay + local_time))
         Timer(reschedule_delay.seconds, Schedule).start()
 
 relay = Relay(4)
@@ -46,6 +44,5 @@ Sun = ephem.Sun()
 Platteville.lat='42.7371'
 Platteville.lon='-90.4775'
 Platteville.elevation = 302
-Platteville.date = datetime.now() 
 
 Schedule()
