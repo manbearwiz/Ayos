@@ -43,4 +43,4 @@ Ayos is an alternate pronunciation of Eos, the Greek goddess of the dawn.
 
 ###License
 
-The source is released under [MIT-License](http://opensource.org/licenses/MIT).
+The source is released under the [MIT-License](http://opensource.org/licenses/MIT).
