@@ -52,9 +52,6 @@ Not to other systems, but rather other locations. As of right now everything is 
 
 Relating to enhancement above, including geocoding via [The Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/) would be a significant usabiltiy improvement. I attempted to use [pygeocoder](http://code.xster.net/pygeocoder/wiki/Home) and [geopy](https://github.com/geopy/geopy) but unfortunately they both have setup issue on my system when I use pip. Not sure the reason why.
 
-```
-sudo nohup python3 LightController.py &
-```
 About
 --------
 
