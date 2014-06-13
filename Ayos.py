@@ -1,26 +1,27 @@
 import RPi.GPIO as GPIO
 import ephem
 import time
-import simpledaemon
 
+from simpledaemon import Daemon
 from RelayController import Relay
 from datetime import datetime,tzinfo,timedelta
 from threading import Timer
 
-class AyosDaemon(simpledaemon.Daemon):
+class AyosDaemon(Daemon):
     default_conf = '/etc/ayosdaemon.conf'
     section = 'ayos'
     
-    relay = Relay(4)
+
 
     Platteville = ephem.Observer()
     Sun = ephem.Sun()
 
-    Platteville.lat='42.7371'
-    Platteville.lon='-90.4775'
+
     
     def run(self):
-            
+        relay = Relay(args.port)
+        Platteville.lat=args.latitude
+        Platteville.lon=args.longitude
         next_sunrise_date = Platteville.next_rising(Sun).datetime()
         next_sunset_date = Platteville.next_setting(Sun).datetime()
         
@@ -40,6 +41,16 @@ class AyosDaemon(simpledaemon.Daemon):
             next_sunrise_date = Platteville.next_rising(Sun).datetime()
 
             time.sleep(next_sunrise_date - datetime.utcnow())
+            
+    def add_arguments(self):
+        super(AyosDaemon, self).add_arguments()
+        self.parser.add_argument('--lat', dest='latitude', required='True'
+                            action='store', help='Lattitude of location' type=float)
+        self.parser.add_argument('--long', dest='longitude', required='True'
+                            action='store', help='Longitude of location' type=float)
+        self.parser.add_argument('--port', dest='port', required='True'
+                            action='store', help='GPIO port to control', type=int)                    
+        self.parser.description = 'Run Ayos light controller for a specified location'
 
 if __name__ == '__main__':
     AyosDaemon().main()
