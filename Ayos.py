@@ -11,36 +11,27 @@ class AyosDaemon(Daemon):
     default_conf = '/etc/ayosdaemon.conf'
     section = 'ayos'
     
-
-
     Platteville = ephem.Observer()
     Sun = ephem.Sun()
 
-
-    
     def run(self):
         relay = Relay(args.port)
         Platteville.lat=args.latitude
         Platteville.lon=args.longitude
-        next_sunrise_date = Platteville.next_rising(Sun).datetime()
-        next_sunset_date = Platteville.next_setting(Sun).datetime()
-        
-        if next_sunrise_date < next_sunset_date: #It is night time
+
+        if nightTime()
             relay.turnOff()
-            time.sleep(next_sunrise_date - datetime.utcnow())
+            
+            sleepUntil(Platteville.next_rising(Sun).datetime())
 
         while True:
             relay.turnOn()
-            
-            next_sunset_date = Platteville.next_setting(Sun).datetime()
 
-            time.sleep(next_sunset_date - datetime.utcnow())
+            sleepUntil(Platteville.next_setting(Sun).datetime())
             
             relay.turnOff()
-            
-            next_sunrise_date = Platteville.next_rising(Sun).datetime()
 
-            time.sleep(next_sunrise_date - datetime.utcnow())
+            sleepUntil(Platteville.next_rising(Sun).datetime())
             
     def add_arguments(self):
         super(AyosDaemon, self).add_arguments()
@@ -51,6 +42,12 @@ class AyosDaemon(Daemon):
         self.parser.add_argument('--port', dest='port', required='True'
                             action='store', help='GPIO port to control', type=int)                    
         self.parser.description = 'Run Ayos light controller for a specified location'
+        
+    def nightTime(self):
+        return Platteville.next_rising(Sun).datetime() < Platteville.next_setting(Sun).datetime()
+        
+    def sleepUntil(self, date):
+        time.sleep(date - datetime.utcnow())
 
 if __name__ == '__main__':
     AyosDaemon().main()
