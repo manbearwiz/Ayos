@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import ephem
 import time
+import geocoding
 
 from simpledaemon import Daemon
 from RelayController import Relay
@@ -35,11 +36,20 @@ class AyosDaemon(Daemon):
             
     def add_arguments(self):
         super(AyosDaemon, self).add_arguments()
-        self.parser.add_argument('--lat', dest='latitude', required='True'
-                            action='store', help='Lattitude of location' type=float)
-        self.parser.add_argument('--long', dest='longitude', required='True'
-                            action='store', help='Longitude of location' type=float)
-        self.parser.add_argument('--port', dest='port', required='True'
+        
+        
+        location_group = self.start_parser.add_mutually_exclusive_group()
+        location_group.add_argument('--address', action='store')
+        latlong_group = location_group.add_argument_group('latlong', 'lat long description')
+        latlong_group.add_argument(
+            '--latitude', action='store', required='True',
+            help='Latitude of location', type=float
+        )
+        latlong_group.add_argument(
+            '--longitude', action='store' required='True',
+            help='Longitude of location', type=float
+        )
+        self.start_parser.add_argument('--port', dest='port', required='True'
                             action='store', help='GPIO port to control', type=int)                    
         self.parser.description = 'Run Ayos light controller for a specified location'
         
