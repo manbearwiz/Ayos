@@ -11,15 +11,16 @@ class AyosDaemon(Daemon):
     default_conf = '/etc/ayosdaemon.conf'
     section = 'ayos'
     
-    self.location = ephem.Observer()
-    Sun = ephem.Sun()
 
     def run(self):
+        self.location = ephem.Observer()
+        Sun = ephem.Sun()
+
         relay = Relay(args.port)
         self.location.lat=args.latitude
         self.location.lon=args.longitude
 
-        if nightTime()
+        if nightTime():
             relay.turnOff()
             
             sleepUntil(self.location.next_rising(Sun).datetime())
@@ -35,11 +36,11 @@ class AyosDaemon(Daemon):
             
     def add_arguments(self):
         super(AyosDaemon, self).add_arguments()
-        self.parser.add_argument('--lat', dest='latitude', required='True'
-                            action='store', help='Lattitude of location' type=float)
-        self.parser.add_argument('--long', dest='longitude', required='True'
-                            action='store', help='Longitude of location' type=float)
-        self.parser.add_argument('--port', dest='port', required='True'
+        self.start_parser.add_argument('--lat', dest='latitude', required='True',
+                            action='store', help='Lattitude of location', type=float)
+        self.start_parser.add_argument('--long', dest='longitude', required='True',
+                            action='store', help='Longitude of location', type=float)
+        self.start_parser.add_argument('--port', dest='port', required='True',
                             action='store', help='GPIO port to control', type=int)                    
         self.parser.description = 'Run Ayos light controller for a specified location'
         
