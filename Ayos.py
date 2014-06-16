@@ -2,47 +2,53 @@ import RPi.GPIO as GPIO
 import ephem
 import time
 
+from simpledaemon import Daemon
 from RelayController import Relay
 from datetime import datetime,tzinfo,timedelta
 from threading import Timer
 
-def Schedule():
-        utcnow = datetime.utcnow()
-        local_time = datetime.now()	
+class AyosDaemon(Daemon):
+    default_conf = '/etc/ayosdaemon.conf'
+    section = 'ayos'
+    
 
-        print("Scheduling Relay Cycles now ({0:%x %X})".format(local_time))
-        next_sunrise = Platteville.next_rising(Sun)
-        next_sunset = Platteville.next_setting(Sun)
+    def run(self):
+        self.location = ephem.Observer()
+        Sun = ephem.Sun()
 
-        next_sunrise_date = next_sunrise.datetime()
-        next_sunset_date = next_sunset.datetime()
+        relay = Relay(args.port)
+        self.location.lat=args.latitude
+        self.location.lon=args.longitude
 
-        if next_sunrise_date < next_sunset_date:
-                print("It is night time")
-                relay.turnOff()
-        else:
-                print("It is day time")
-                relay.turnOn()
+        if nightTime():
+            relay.turnOff()
+            
+            sleepUntil(self.location.next_rising(Sun).datetime())
 
-        sunrise_delay = next_sunrise_date - utcnow
-        sunset_delay = next_sunset_date - utcnow
-        reschedule_delay = sunrise_delay + timedelta(minutes=30)
+        while True:
+            relay.turnOn()
 
-        print("Turning on in {0}, at {1:%x %X}".format(sunrise_delay, sunrise_delay + local_time))
-        Timer(sunrise_delay.seconds, relay.turnOn).start()
-        print("Turning off in {0}, at {1:%x %X}".format(sunset_delay, sunset_delay + local_time)) 
-        Timer(sunset_delay.seconds, relay.turnOff).start()
-        print("Rescheduling in {0}, at {1:%x %X}".format(reschedule_delay, reschedule_delay + local_time))
-        Timer(reschedule_delay.seconds, Schedule).start()
+            sleepUntil(self.location.next_setting(Sun).datetime())
+            
+            relay.turnOff()
 
-relay = Relay(4)
+            sleepUntil(self.location.next_rising(Sun).datetime())
+            
+    def add_arguments(self):
+        super(AyosDaemon, self).add_arguments()
+        self.start_parser.add_argument('--lat', dest='latitude', required='True',
+                            action='store', help='Lattitude of location', type=float)
+        self.start_parser.add_argument('--long', dest='longitude', required='True',
+                            action='store', help='Longitude of location', type=float)
+        self.start_parser.add_argument('--port', dest='port', required='True',
+                            action='store', help='GPIO port to control', type=int)                    
+        self.parser.description = 'Run Ayos light controller for a specified location'
+        
+    def nightTime(self):
+        return self.location.next_rising(Sun).datetime() < self.location.next_setting(Sun).datetime()
+        
+    def sleepUntil(self, date):
+        time.sleep(date - datetime.utcnow())
 
-
-Platteville = ephem.Observer()
-Sun = ephem.Sun()
-
-Platteville.lat='42.7371'
-Platteville.lon='-90.4775'
-Platteville.elevation = 302
-
-Schedule()
+if __name__ == '__main__':
+    AyosDaemon().main()

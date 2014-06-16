@@ -12,9 +12,34 @@ The following packages should be installed prior to running Ayos.
 
 - [RPi.GPIO](http://sourceforge.net/p/raspberry-gpio-python/wiki/Home/) - Used to control the GPIO ports for the relay
 
+- [SimpleDaemon](https://bitbucket.org/donspaulding/simpledaemon/overview) - Used to run as daemon
+
+
 Hardware
 --------
 My current setup is a Raspberry Pi hooked up to a 4-channel 5V relay via GPIO. Raspberry Pi GPIO ports only put out 3.3V but in my testing this doesn't seem to cause any issue. I have a [ULN2803A](https://www.sparkfun.com/datasheets/IC/uln2803a.pdf) chip laying around that I may wire up to power the relays on a separate PSU when I get time.
+
+
+Usage
+-----
+
+Thanks to SimpleDaemon, Ayos can be run like so:
+
+```
+./Ayos.py --start
+```
+
+Stopping is similar:
+
+```
+./Ayos.py --stop
+```
+
+For a full list of options, see the help:
+
+```
+./Ayos.py --help
+```
 
 Future Enhancements
 -------------------
@@ -27,13 +52,6 @@ Not to other systems, but rather other locations. As of right now everything is 
 
 Relating to enhancement above, including geocoding via [The Google Geocoding API](https://developers.google.com/maps/documentation/geocoding/) would be a significant usabiltiy improvement. I attempted to use [pygeocoder](http://code.xster.net/pygeocoder/wiki/Home) and [geopy](https://github.com/geopy/geopy) but unfortunately they both have setup issue on my system when I use pip. Not sure the reason why.
 
-###Daemonizing
-
-This is intended to be a long running service so it would be nice to include that ability. As of right now I simply use nohup to keep it running like so:
-
-```
-sudo nohup python3 LightController.py &
-```
 About
 --------
 
