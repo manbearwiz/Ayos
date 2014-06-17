@@ -26,19 +26,19 @@ Usage
 Thanks to my fork of SimpleDaemon, Ayos can be run like so:
 
 ```
-./Ayos.py start --lat 42.7371 --lon 90.4775 --port 4
+./ayos start --lat 42.7371 --lon 90.4775 --port 4
 ```
 
 Stopping is similar:
 
 ```
-./Ayos.py stop
+./ayos stop
 ```
 
 For a full list of options, see the help:
 
 ```
-./Ayos.py --help
+./ayos --help
 ```
 
 Future Enhancements
