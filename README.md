@@ -12,7 +12,7 @@ The following packages should be installed prior to running Ayos.
 
 - [RPi.GPIO](http://sourceforge.net/p/raspberry-gpio-python/wiki/Home/) - Used to control the GPIO ports for the relay
 
-- [SimpleDaemon](https://bitbucket.org/donspaulding/simpledaemon/overview) - Used to run as daemon
+- [SimpleDaemon](https://bitbucket.org/donspaulding/simpledaemon/overview) - Used to run as daemon. My fork is currently included in this repo.
 
 
 Hardware
@@ -23,16 +23,16 @@ My current setup is a Raspberry Pi hooked up to a 4-channel 5V relay via GPIO. R
 Usage
 -----
 
-Thanks to SimpleDaemon, Ayos can be run like so:
+Thanks to my fork of SimpleDaemon, Ayos can be run like so:
 
 ```
-./Ayos.py --start
+./Ayos.py start --lat 42.7371 --lon 90.4775
 ```
 
 Stopping is similar:
 
 ```
-./Ayos.py --stop
+./Ayos.py stop
 ```
 
 For a full list of options, see the help:
