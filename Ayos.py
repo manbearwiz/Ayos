@@ -38,7 +38,7 @@ class AyosDaemon(Daemon):
         super(AyosDaemon, self).add_arguments()
         self.start_parser.add_argument('--lat', dest='latitude', required='True',
                             action='store', help='Lattitude of location', type=float)
-        self.start_parser.add_argument('--long', dest='longitude', required='True',
+        self.start_parser.add_argument('--lon', dest='longitude', required='True',
                             action='store', help='Longitude of location', type=float)
         self.start_parser.add_argument('--port', dest='port', required='True',
                             action='store', help='GPIO port to control', type=int)                    
