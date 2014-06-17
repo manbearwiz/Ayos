@@ -26,7 +26,7 @@ Usage
 Thanks to my fork of SimpleDaemon, Ayos can be run like so:
 
 ```
-./Ayos.py start --lat 42.7371 --lon 90.4775
+./Ayos.py start --lat 42.7371 --lon 90.4775 --port 4
 ```
 
 Stopping is similar:
